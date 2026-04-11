@@ -1,10 +1,32 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../utils/supabase/client';
 
 interface ProfileHeaderProps {
   themeTextClass: string;
 }
 
 export default function ProfileHeader({ themeTextClass }: ProfileHeaderProps) {
+  const [username, setUsername] = useState<string>('Memuat...');
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const u = session.user.user_metadata?.username;
+        if (u) {
+          setUsername(u);
+        } else {
+          setUsername('Pengguna');
+        }
+      } else {
+        setUsername('Tamu');
+      }
+    };
+    fetchUser();
+  }, []);
+
   return (
     <div className="w-full sm:max-w-md px-6 pt-12 pb-6 flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -23,8 +45,10 @@ export default function ProfileHeader({ themeTextClass }: ProfileHeaderProps) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <h1 className={`${themeTextClass} font-extrabold text-lg tracking-wide transition-colors duration-500`}>Hi, Fulan</h1>
-          <div className="flex items-center gap-1 bg-white px-3 py-1 rounded-full shadow-sm">
+          <h1 className={`${themeTextClass} font-extrabold text-lg tracking-wide transition-colors duration-500 max-w-[200px] truncate`}>
+            Hi, {username}
+          </h1>
+          <div className="flex items-center gap-1 bg-white px-3 py-1 w-fit rounded-full shadow-sm">
             {/* Lightning Icon */}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFCB05">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />

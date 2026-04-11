@@ -1,10 +1,32 @@
 'use client';
 
 import type { NextPage } from 'next';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { supabase } from '../../../utils/supabase/client';
 import BottomNavigation from '../../../components/BottomNavigation';
 import ProfileHeader from '../../../components/ProfileHeader';
 
 const ProfilePage: NextPage = () => {
+  const [username, setUsername] = useState<string>('Memuat...');
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        const u = session.user.user_metadata?.username;
+        if (u) {
+          setUsername(u);
+        } else {
+          setUsername('Pengguna');
+        }
+      } else {
+        setUsername('Tamu');
+      }
+    };
+    fetchUser();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#ECF8EC] font-sans pb-24 relative overflow-hidden flex flex-col items-center">
       
@@ -46,9 +68,9 @@ const ProfilePage: NextPage = () => {
               </div>
             </div>
 
-            {/* Fulan Text */}
-            <h2 className="text-black text-[20px] font-bold font-inter mt-8 mb-2">
-              Fulan
+            {/* Dynamic Username Text */}
+            <h2 className="text-black text-[20px] font-bold font-inter mt-8 mb-2 text-center max-w-[250px] truncate mx-auto">
+              {username}
             </h2>
 
             {/* Experience / Level Bar */}
@@ -58,9 +80,9 @@ const ProfilePage: NextPage = () => {
 
             {/* Edit Profile Button */}
             <div className="flex justify-center mb-7">
-              <button className="bg-black text-white px-8 py-2 rounded-full text-[16px] font-bold font-inter hover:bg-gray-800 transition-colors h-[36px] flex items-center justify-center min-w-[130px]">
+              <Link href="/main/profile/edit" className="bg-black text-white px-8 py-2 rounded-full text-[16px] font-bold font-inter hover:bg-gray-800 transition-colors h-[36px] flex items-center justify-center min-w-[130px]">
                 Edit Profile
-              </button>
+              </Link>
             </div>
 
             {/* Divider */}

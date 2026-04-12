@@ -23,7 +23,7 @@ export default function Login() {
     setLoading(true);
 
     // Supabase SignIn
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -32,8 +32,18 @@ export default function Login() {
       setErrorMsg(error.message);
       setLoading(false);
     } else {
-      // Success. Redirect to Dashboard
-      router.push('/main/dashboard');
+      // Check if the user has completed the diagnostic test
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('diagnostic_completed')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profile?.diagnostic_completed) {
+        router.push('/main/dashboard');
+      } else {
+        router.push('/main/diagnostic');
+      }
     }
   };
 

@@ -83,9 +83,9 @@ const Dashboard: NextPage = () => {
           {/* Level Map Curve Path Nodes */}
           <div className="relative w-[300px] h-[600px] mt-10 pointer-events-auto">
             
-            {/* Node 1 (Clickable to enter exam) */}
+            {/* Node 1 (Clickable to enter learning module) */}
             <Link 
-              href="/main/exam"
+              href="/main/module/1"
               className={`absolute top-[0%] left-[50%] -translate-x-1/2 w-[60px] h-[60px] rounded-full transition-all duration-300 cursor-pointer shadow-md hover:scale-110 flex items-center justify-center font-extrabold text-xl z-10 ${
                 isNode1Completed 
                   ? `${theme.currentNode} text-[#1A2024] shadow-[0_0_15px_rgba(255,255,255,0.7)]` 

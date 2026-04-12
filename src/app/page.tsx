@@ -14,11 +14,23 @@ export default function Home() {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        // Jika belum login, lempar ke halaman login
         router.push('/auth/login');
       } else {
-        // Ambil data username dari metadata yang kita simpan saat signup
-        const activeUsername = session.user.user_metadata?.username || 'Pengguna Tanpa Nama';
+        // Check if user has completed the diagnostic test
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('diagnostic_completed')
+          .eq('id', session.user.id)
+          .single();
+
+        if (!profile?.diagnostic_completed) {
+          // First-time user — send to diagnostic test
+          router.push('/main/diagnostic');
+          return;
+        }
+
+        // Returning user — show welcome screen
+        const activeUsername = session.user.user_metadata?.username || 'User';
         setUsername(activeUsername);
         setLoading(false);
       }
